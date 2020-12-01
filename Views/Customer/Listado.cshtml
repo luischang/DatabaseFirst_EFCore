@@ -1,0 +1,46 @@
+﻿@{
+    IEnumerable<Customer> listado = (IEnumerable<Customer>)ViewBag.ListadoCliente;
+}
+
+<table id="tbClientes" class="table table-striped">
+
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>NOMBRES</th>
+            <th>APELLIDOS</th>
+            <th>CIUDAD</th>
+            <th>PAIS</th>
+            <th>TELEFONO</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in listado)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.FirstName</td>
+                <td>@item.LastName</td>
+                <td>@item.City</td>
+                <td>@item.Country</td>
+                <td>@item.Phone</td>
+                <td>
+                    <button id="btnEliminarCliente"
+                            data-id="@item.Id"
+                            class="btn btn-danger btnEliminarCliente">
+                        Eliminar
+                    </button>
+
+                    <button id="btnEditarCliente"
+                            data-id="@item.Id"
+                            class="btn btn-warning btnEditarCliente">
+                        Editar
+                    </button>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
