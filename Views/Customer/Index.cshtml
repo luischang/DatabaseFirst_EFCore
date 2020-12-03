@@ -3,6 +3,9 @@
     ViewData["Title"] = "Index";
 }
 
+<script src="~/lib/datatables.net/jquery.dataTables.js"></script>
+<link href="~/lib/datatables.net/datatables.min.css" rel="stylesheet" />
+
 <div class="alert alert-info">
     <div class="row">
         <div class="col-md-4">
@@ -22,7 +25,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Registro de Clientes </h5>
+                <h5 class="modal-title" id="titulo">Registro de Clientes</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -85,6 +88,46 @@
 <script>
 
 
+    $("#divListadoClientes").on('click', '.btnEliminarCliente', function () {
+        var vIdCliente = $(this).attr('data-id');
+
+        if (confirm("¿Estás seguro de eliminar el cliente?")) {
+            $.ajax({
+                type: "POST",
+                url: "Customer/Eliminar",
+                data: { idCliente: vIdCliente },
+                success: function (exito) {
+                    if (exito) {
+                        CargarListadoCliente();
+                    } else {
+                        alert("Ocurrió un error al realizar la eliminación");
+                    }
+                }
+            });
+        }
+    });
+
+    $("#divListadoClientes").on('click', '.btnEditarCliente', function () {
+        var vIdCliente = $(this).attr('data-id');
+        $("#hidIDCliente").val(vIdCliente);
+        var modalRegistro = $("#modalRegistroCliente");
+        $.ajax({
+            type: "GET",
+            url: "Customer/Obtener",
+            data: { idCliente: vIdCliente },
+            cache: false,
+            success: function (objCliente) {
+                $("#txtNombres").val(objCliente.firstName);
+                $("#txtApellidos").val(objCliente.lastName);
+                $("#txtPais").val(objCliente.country);
+                $("#txtCiudad").val(objCliente.city);
+                $("#txtTelefono").val(objCliente.phone);
+                modalRegistro.modal();
+                modalRegistro.find("#titulo").htm("Editar Cliente");
+            }
+        })
+    });
+
 
     $("#btnGrabarCliente").click(function () {
         var vIDCliente = $("#hidIDCliente").val();
@@ -93,7 +136,6 @@
         var vPais = $("#txtPais").val();
         var vCiudad = $("#txtCiudad").val();
         var vTelefono = $("#txtTelefono").val();
-
 
         $.ajax({
             type: "POST",
@@ -111,6 +153,7 @@
                 if (exito) {
                     alert("Se registró correctamente");
                     CargarListadoCliente();
+                    $("#modalRegistroCliente").modal("toggle");
                 } else {
                     alert("Ocurrió un error en la transacción");
                 }
@@ -139,6 +182,7 @@
             cache: false,
             success: function (dataHtml) {
                 $("#divListadoClientes").html(dataHtml);
+                $("#divListadoClientes #tbClientes").DataTable();
             }
         });
     }

@@ -1,0 +1,153 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+
+    IEnumerable<Customer> clientes = (IEnumerable<Customer>)ViewBag.ListadoCliente;
+    IEnumerable<Product> productos = (IEnumerable<Product>)ViewBag.ListadoProducto;
+    
+}
+
+<h1>Registro de Ordenes</h1>
+
+<div class="alert alert-primary" role="alert">
+    Datos Principales
+</div>
+
+
+<div class="form-row">
+    <div class="form-group col-md-2">
+        <label>Fecha</label>
+        <input type="date" class="form-control" id="txtFecha" />
+    </div>
+
+    <div class="form-group col-md-2">
+        <label>Nro.Orden</label>
+        <input type="number" class="form-control" id="txtNroOrden" />
+    </div>
+
+    <div class="form-group col-md-4">
+        <label>Cliente</label>
+        <select id="cboCliente" class="form-control">
+            <option selected value="-1">Elija un cliente...</option>
+            @foreach (var item in clientes)
+            {
+                <option value="@item.Id">
+                    @(item.LastName + " " + item.FirstName)
+                </option>
+            }
+        </select>
+    </div>
+</div>
+<hr />
+<div class="alert alert-primary" role="alert">
+    Agregar Productos
+</div>
+
+<div class="form-row">
+    <div class="form-group col-md-4">
+        <label>Producto</label>
+        <select id="cboProducto" class="form-control">
+            <option selected value="-1">Elija un producto...</option>
+            @foreach (var item in productos)
+            {
+                <option value="@item.Id">
+                    @(item.ProductName)
+                </option>
+            }
+        </select>
+    </div>
+    <div class="form-group col-md-2">
+        <label>Cantidad</label>
+        <input type="number" class="form-control" id="txtCantidad" />
+    </div>
+    <div class="form-group col-md-2">
+        <label>Precio</label>
+        <input type="text" class="form-control" id="txtPrecio" />
+    </div>
+
+    <div class="form-group col-md-2">
+        <button id="btnAgregarProducto" class="btn btn-success">Agregar</button>
+    </div>
+
+    <div class="form-group col-md-2">
+        <button id="btnConfirmarOrden" class="btn btn-info">Confirmar</button>
+    </div>
+
+</div>
+
+<div class="alert alert-primary" role="alert">
+    Productos Agregados
+</div>
+<div id="divListadoProductos">
+
+</div>
+
+<script>
+
+    
+    $("#btnConfirmarOrden").click(function () {
+        var vCustomerID = $("#cboCliente").val();
+        var vOrderDate = $("#txtFecha").val();
+        var vOrderNumber = $("#txtNroOrden").val();
+
+        $.ajax({
+            type: "POST",
+            url: "Venta/ConfirmarOrden",
+            cache: false,
+            data: {
+                customerID: vCustomerID,
+                orderDate: vOrderDate,
+                orderNumber: vOrderNumber},
+            success: function (dataHtml) {
+                alert("Se confirmó la orden correctamente...");
+            }
+
+        });
+
+
+
+    });
+
+    function CargarListadoProductos() {
+        $.ajax({
+            type: "GET",
+            url: "Venta/ListadoProducto",
+            cache: false,
+            success: function (dataHtml) {
+                $("#divListadoProductos").html(dataHtml);
+            }
+
+        });
+
+    }
+
+    $("#btnAgregarProducto").click(function () {
+        var vProductID = $("#cboProducto").val();
+        var vUnitPrice = $("#txtPrecio").val();
+        var vQuantity = $("#txtCantidad").val();
+
+        $.ajax({
+            type: "POST",
+            url: "Venta/AgregarProducto",
+            cache: false,
+            data: {
+                productID: vProductID,
+                unitPrice: vUnitPrice,
+                quantity: vQuantity
+            },
+            success: function (data) {
+                if (data == "DUP") {
+                    alert("El producto ya se encuentra agregado a la lista");
+                } else {
+                    CargarListadoProductos();
+                }
+            }
+        });
+
+
+    });
+
+
+</script>
+
+

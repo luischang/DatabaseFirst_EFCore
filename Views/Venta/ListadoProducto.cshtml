@@ -1,0 +1,37 @@
+﻿@{ 
+
+    IEnumerable<OrderItem> productosAgregados = (IEnumerable<OrderItem>)ViewBag.ProductosAgregados;
+    IEnumerable<Product> baseProductos = (IEnumerable<Product>)ViewBag.ListadoProducto;
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Precio</th>
+            <th>Cantidad</th>
+            <th>Total</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in productosAgregados)
+        {
+            <tr>
+                <td>@baseProductos.Where(x=>x.Id == item.ProductId).FirstOrDefault().ProductName.ToString()</td>
+                <td>@item.UnitPrice</td>
+                <td>@item.Quantity</td>
+                <td>@(item.UnitPrice * item.Quantity)</td>
+                <td>
+                    <button class="btn btn-danger" 
+                            data-productid="@item.ProductId">
+                    Quitar</button>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+
+</table>

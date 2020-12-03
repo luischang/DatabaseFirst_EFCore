@@ -21,6 +21,7 @@ namespace NETCOREM3_DatabaseFirst.Controllers
             return PartialView();
         }
 
+        [HttpPost]
         public IActionResult Grabar(int idCliente,
                 string nombres, string apellidos, string pais, string ciudad, string telefono)
         {
@@ -42,5 +43,22 @@ namespace NETCOREM3_DatabaseFirst.Controllers
 
             return Json(exito);
         }
+
+
+        [HttpPost]
+        public IActionResult Eliminar(int idCliente)
+        {
+            bool exito = DACustomer.Eliminar(idCliente);
+            return Json(exito);
+        }
+
+        public IActionResult Obtener(int idCliente)
+        {
+            Customer customer = DACustomer.Obtener(idCliente);
+            return Json(customer);
+        }
+
+
+
     }
 }

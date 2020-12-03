@@ -25,6 +25,8 @@ namespace NETCOREM3_DatabaseFirst
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddSession(options =>
+                options.IdleTimeout = TimeSpan.FromMinutes(20));
 
             services.AddDbContext<SalesContext>(options =>
                             options.UseSqlServer(Configuration.GetConnectionString("DevConnection")));
@@ -44,6 +46,7 @@ namespace NETCOREM3_DatabaseFirst
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseSession();
 
             app.UseAuthorization();
 
